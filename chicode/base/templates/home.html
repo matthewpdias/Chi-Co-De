@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if request.user.is_authenticated %}
+  <div class="container">
+    <h2>Welcome {{ request.user.username }}</h2>
+    <div class="col-sm-5 col-md-5 well">
+      <h2>Your Projects</h2>
+      <ul>
+        <li>
+          <h4>Project1</h4>
+          <p>A short description</p>
+        </li>
+        <li>
+          <h4>Project2</h4>
+          <p>A short description</p>
+        </li>
+        <li>
+          <h4>Project3</h4>
+          <p>A short description</p>
+        </li>
+      </ul>
+    </div>
+    <div class ="col-sm-1 col-md-1"></div>
+    <div class="col-sm-5 col-md-5 well">
+      <h2>Discussions you watch</h2>
+      <p>
+        <span class="text-success">Pico</span><span> said: "Well I think that you should get an A+"</span>
+      </p>
+      <p>
+        <span class="text-success">someguy </span><span>  said: "Well I think that you should get an A+" </span>
+      </p>
+    </div>
+  </div>
+
+
+
+
+
+
+
+{% else %}
+  <h2>YOU FUCKED UP</h2>
+{% endif %}
+
+{% endblock %}
