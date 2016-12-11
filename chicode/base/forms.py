@@ -10,17 +10,20 @@ class CommentForm(forms.ModelForm):
         exclude = ('created_at', 'creator',)
 
 
+class LogForm(forms.Form):
+    username = forms.CharField(label='Username', max_length=20)
+    password = forms.CharField(label='Password', max_length=32, widget=forms.PasswordInput)
 
-class UserForm(forms.ModelForm):
+class RegisterForm(forms.Form):
+    username = forms.CharField(label='Username', max_length=100)
+    email = forms.CharField(label='Email Address', max_length=200)
+    password1 = forms.CharField(label='Password', max_length=32, widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Confirm', max_length=32, widget=forms.PasswordInput)
 
-    class Meta:
-        model = User
-        fields = ['username', 'password']
-        #username = forms.CharField(label='Username', max_length=20)
-        #password = forms.CharField(label='password', max_length=32, widget=forms.PasswordInput)
 
-class ProfileForm(forms.ModelForm):
-
-    class Meta:
-        model = Profile
-        exclude = ['user']
+    def check_pass(self):
+        password1 = self.cleaned_data['password1']
+        password2 = self.cleaned_data['password2']
+        if password1 != password2:
+            return False
+        return True

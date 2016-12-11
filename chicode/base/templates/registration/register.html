@@ -14,11 +14,18 @@
 <body>
   <div class="headroom text-center">
     <div class="container">
+      {% if message %}
+        <ul>
+          <li>{{ message }}</li>
+        </ul>
+      {% endif %}
       <form method="post">
         {% csrf_token %}
-        <p><label for="id_username">Username:</label> <input autofocus="" id="id_username" maxlength="20" name="username" type="text" required=""></p>
-        <p><label for="id_password">Password:</label> <input id="id_password" name="password1" type="password" required=""></p>
-        <button type="submit">Register</button>
+        {% for field in form %}
+          <p>{{ field.label_tag }} {{ field }}</p>
+        {% endfor %}
+        <button type="submit" class="btn btn-sm btn-primary">Register</button>
+        <a href="/login" class="btn btn-sm btn-success">login</a>
       </form>
     </div>
   </div>

@@ -25,9 +25,9 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^comment/[0-9]+/$', views.comment, name="comment"),
     url(r'^newproject/[0-9]+/$', views.new_project, name='new_project'),
-    url(r'^login/$', auth_views.login, name='login'),
-    url(r'^logout/$', auth_views.logout, name='logout'),
-    url(r'^register/', views.register, name='register'),
+    url(r'^login/$', views.my_login, name='login'),
+    url(r'^logout/$', views.my_logout, name='logout'),
+    url(r'^register/', views.my_register, name='register'),
+    url(r'^viewprofile/([A-Z]+[a-z]*[0-9]*|[a-z]+[A-Z]*[0-9]*|[0-9]+[a-z]*[A-Z]*)', views.view_profile, name="view_profile"),
     url(r'^home/$', views.home, name='home'),
-    url(r'^logout/$', views.logout, name='logout'),
 ]

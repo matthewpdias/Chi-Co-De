@@ -11,9 +11,9 @@ class Project(models.Model):
     tech_used = models.TextField(blank=True, default='')
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now=True)
-    owner = models.ForeignKey(User, blank=True, null=True)
+    owner = models.ForeignKey(User, related_name='project_owner')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.project_name
 
     def uses(self):
@@ -24,18 +24,30 @@ class Comment(models.Model):
     creator = models.ForeignKey(User, blank=True, null=True)
     content = models.TextField(max_length=1000)
 
+    def __str__(self):
+        return '{}@{}'.format(self.creator, self.created_at)
+
 class Skill(models.Model):
-    name = models.CharField(max_length=64)
+    description = models.CharField(max_length=64)
+
+    def __str__(self):
+        return self.description
 
 class Major(models.Model):
     name = models.CharField(max_length=10)
 
+    def __str__(self):
+        return self.name
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     major = models.ForeignKey(Major, null=True)
-    skills = models.ForeignKey(Skill, null=True)
+    skills = models.ManyToManyField(Skill)
     about = models.TextField(max_length=1000)
-    project = models.ForeignKey(Project, null=True)
+    projects = models.ManyToManyField(Project)
+
+    def __str__(self):
+        return '{}`s profile'.format(self.user)
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

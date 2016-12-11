@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+  <h2> {{ user }}'s profile </h2>
+  major skills about project
+  <h2> Major</h2>
+  <ul>
+    <li> {{ profile.major }} </li>
+  </ul>
+  <h2> Skills </h2>
+  <ul>
+  {% for skill in skills %}
+  <li> {{ skill }} </li>
+  {% endfor %}
+  <h2> Projects </h2>
+  <ul>
+    {% for  %}
+    <li>
+  </ul>
+
+</div>
+{% endblock %}

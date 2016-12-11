@@ -14,10 +14,18 @@
 <body>
   <div class="headroom text-center">
     <div class="container">
-      <form method="post">
+      {% if message %}
+      <ul class="messages">
+          <li>{{ message }}</li>
+      </ul>
+      {% endif %}
+      <form action="/login/" method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Login</button>
+        {% for field in form %}
+          <p>{{ field.label_tag }}{{ field }}</P>
+        {% endfor %}
+        <button type="submit" class="btn btn-sm btn-primary">Login</button>
+        <a href="/register" class = "btn btn-sm btn-success">Register</a>
       </form>
     </div>
   </div>

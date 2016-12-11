@@ -1,8 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-{% if request.user.is_authenticated %}
   <div class="container">
     <h2>Welcome {{ request.user.username }}</h2>
     <div class="col-sm-5 col-md-5 well">
@@ -33,15 +31,4 @@
       </p>
     </div>
   </div>
-
-
-
-
-
-
-
-{% else %}
-  <h2>YOU FUCKED UP</h2>
-{% endif %}
-
 {% endblock %}
