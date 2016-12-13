@@ -95,11 +95,11 @@ def upload_file(request, project):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
-            instance = Upload(up_file=request.FILES['file'])
-            up_description
-            assoc_project = form.cleaned_data['assoc_project']
+            instance = Upload(up_file=request.FILES['up_file'])
+            up_description = form.cleaned_data['up_description']
+            instance.assoc_project = Project.objects.filter(project_name=project).first()
             instance.save()
-            return HttpResponseRedirect('/success/url/')
+            return redirect('/home')
     else:
         form = UploadFileForm()
     return render(request, 'upload.html', {'form': form})

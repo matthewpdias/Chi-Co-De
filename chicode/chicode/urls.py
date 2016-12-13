@@ -31,6 +31,7 @@ urlpatterns = [
     url(r'^allprojects/', views.project_index, name='project_index'),
     url(r'^newproject/', views.add_project, name='add_project'),
     url(r'^newtopic/', views.add_topic, name='add_topic'),
+    url(r'^upload/[[A-za-z0-9]+]', views.upload_file, name='upload_file'),
     url(r'^alltopics/', views.topic_index, name='topic_index'),
     url(r'^editprofile/([A-za-z0-9]+)', views.edit_profile, name="edit_profile"),
     url(r'^viewprofile/([A-za-z0-9]+)', views.view_profile, name="view_profile"),

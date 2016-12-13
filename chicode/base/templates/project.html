@@ -14,9 +14,11 @@
   </ul>
 {% endfor %}
 
-  <form method="post" action="{{request.path}}">
+  <form method="post" action="{{request.path}}" class="inline">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit" class="btn btn-sm btn-success">Post</button>
   </form>
+  <a href={url 'upload_file'}
+
 {% endblock %}
