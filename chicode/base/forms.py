@@ -1,13 +1,44 @@
 from django import forms
-from base.models import Project, Comment, User, Profile
+from base.models import *
+import re
+
+class UploadFileForm(forms.ModelForm):
+    class Meta:
+        model = Upload
+        fields = ['up_name', 'up_description', 'up_file']
+
+class NewTopicForm(forms.Form):
+    topic_name = forms.CharField(max_length = 64, required=True)
+    first = forms.CharField(max_length=1000, widget=forms.Textarea, label='Start the disussion')
+
+    def scrub(self):
+        self.cleaned_data['topic_name'] = self.cleaned_data['topic_name'].replace(' ','')
+
+        self.cleaned_data['topic_name'] = re.sub('[^a-zA-Z0-9]+','',self.cleaned_data['topic_name'])
+
+class NewProjectForm(forms.Form):
+    project_name = forms.CharField(max_length=64)
+    project_description = forms.CharField(max_length=10000, widget=forms.Textarea)
+    tech_used = forms.CharField(max_length=1000, widget=forms.Textarea)
+
+    def scrub(self):
+        self.cleaned_data['project_name'] = self.cleaned_data['project_name'].replace(' ','')
+
+        self.cleaned_data['project_name'] = re.sub('[^a-zA-Z0-9]+','',self.cleaned_data['project_name'])
+
+class EditProfileForm(forms.Form):
+    major = forms.CharField(max_length=10)
+    skills = forms.CharField(max_length=1000, widget=forms.Textarea)
+    about = forms.CharField(max_length=1000, label='About you', widget=forms.Textarea)
 
 
-class CommentForm(forms.ModelForm):
+class ProjectCommentForm(forms.Form):
+    content = forms.CharField(max_length=200, help_text="enter your comment", required=True, widget=forms.Textarea)
+    exclude = ('created_at', 'creator', 'project')
 
-    class Meta():
-        model = Comment
-        content = forms.CharField(max_length=200, help_text="enter your comment", required=True, widget=forms.Textarea)
-        exclude = ('created_at', 'creator',)
+class TopicCommentForm(forms.Form):
+    content = forms.CharField(max_length=200, help_text="enter your comment", required=True, widget=forms.Textarea)
+    exclude = ('created_at', 'creator', 'project')
 
 
 class LogForm(forms.Form):

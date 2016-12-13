@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container headroom">
+<h3> Chi/Co/De discussions: </h3>
+{% for topic in topics %}
+  <p class="lead"> <a href="{%url 'view_topic' topic.topic_name%}">{{topic.topic_name}}</a></p>
+{% endfor %}
+<a href="/newtopic" class="btn btn-primary">new topic</a>
+</div>
+{% endblock %}

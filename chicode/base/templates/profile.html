@@ -2,22 +2,31 @@
 
 {% block content %}
 <div class="container">
-  <h2> {{ user }}'s profile </h2>
-  major skills about project
-  <h2> Major</h2>
-  <ul>
-    <li> {{ profile.major }} </li>
-  </ul>
-  <h2> Skills </h2>
-  <ul>
-  {% for skill in skills %}
-  <li> {{ skill }} </li>
-  {% endfor %}
-  <h2> Projects </h2>
-  <ul>
-    {% for  %}
-    <li>
-  </ul>
-
+    <h2 class="inline"> {{ user }}'s profile {% if myprofile %} &nbsp</h2>
+    <a class="inline" href="{%url 'edit_profile' user%}">
+    <span class="inline glyphicon glyphicon-cog" aria-hidden="true"></span>
+    </a>{% endif %}
+  </div>
+  <p>&quot{{ profile.about }}&quot</p>
+  <div class="well">
+    <h2> Major</h2>
+    <ul>
+      <li> {{ profile.major }} </li>
+    </ul>
+  </div>
+  <div class="well">
+    <h2> Skills </h2>
+    <ul>
+    <p> {{ profile.skills }} </p>
+    </ul>
+  </div>
+  <div class="well">
+    <h2> Projects </h2>
+    <ul>
+      {% for project in projects %}
+      <li><a href="{%url 'view_project' project.project_name%}">{{project.project_name}}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
 </div>
 {% endblock %}

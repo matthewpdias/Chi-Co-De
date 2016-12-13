@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container">
-    <h2>Explore Projects</h2>
+<div class="container headroom">
+<h3> Chi/Co/De projects: </h3>
+{% for project in projects %}
+  <p><a href="{%url 'view_project' project.project_name%}"><span class="lead">{{project.project_name}}</a></span> &nbsp &nbsp &nbsp {{ project.tech_used }} </p>
+{% endfor %}
+<a href="/newproject" class="btn btn-primary">new project</a>
+</div>
 {% endblock %}

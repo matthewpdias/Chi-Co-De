@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+  <h2> {{ project.project_name }} </h2>
+  <h4> &quot{{ project.project_description }}&quot </h4>
+  <h4> This project uses:&nbsp &nbsp{{ project.tech_used }} </h4>
+  <p> a project by <a href="{%url 'view_profile' project.owner%}">{{project.owner}}</a><p>
+</div>
+{% for comment in comments %}
+  <p class="lead"> &quot{{ comment.content }}&quot</p>
+  <ul>
+    <li><a href="{%url 'view_profile' comment.creator.username%}">{{comment.creator.username}}</a>@{{comment.created_at|date:"D d M Y"}}</li>
+  </ul>
+{% endfor %}
+
+  <form method="post" action="{{request.path}}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-sm btn-success">Post</button>
+  </form>
+{% endblock %}

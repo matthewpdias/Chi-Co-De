@@ -9,6 +9,44 @@ from .forms import *
 from django.contrib.auth.decorators import login_required
 from django import forms
 
+def add_topic(request):
+    if not request.user.is_authenticated():
+        return redirect('/login')
+
+    if request.method == 'POST':
+        form = NewTopicForm(request.POST)
+        if form.is_valid():
+            new_topic = Topic()
+            form.scrub()
+            new_topic.topic_name = form.cleaned_data['topic_name']
+            new_topic.first = form.cleaned_data['first']
+            new_topic.save()
+            url = '/viewtopic/' + new_topic.topic_name + '/'
+            return redirect(url)
+    else:
+        form = NewTopicForm()
+        return render(request, 'new_topic.html', {'form' : form })
+
+def add_project(request):
+    if not request.user.is_authenticated():
+        return redirect('/login')
+
+    if request.method == 'POST':
+        form = NewProjectForm(request.POST)
+        if form.is_valid():
+            form.scrub()
+            new_project = Project()
+            new_project.project_name = form.cleaned_data['project_name']
+            new_project.project_description = form.cleaned_data['project_description']
+            new_project.tech_used = form.cleaned_data['tech_used']
+            new_project.owner = request.user
+            new_project.save()
+            url = '/viewproject/' + new_project.project_name + '/'
+            return redirect(url)
+    else:
+        form = NewProjectForm()
+        return render(request, 'new_project.html', {'form' : form })
+
 def index(request):
     return render(request, 'index.html')
 
@@ -20,13 +58,51 @@ def new_project(request):
 
 def home(request):
     if request.user.is_authenticated():
-        return render(request, 'home.html')
+        projects = Project.objects.filter(owner=request.user).all()
+        #get the last TopicComments the user has made, sorted by creation.. May limit to less eventually
+        Tcomments = TopicComment.objects.filter(creator=request.user).all().order_by('created_at')#[:10]
+        mytopics = set()
+        #store recent topics those commets relate to in a set to eliminate repeats
+        for comment in Tcomments:
+            mytopics.add(comment.topic)
+        #store the most recent comment for each recent topic for dashboard digest
+        topic_digest = dict.fromkeys(mytopics, 'no comments')
+
+        for topic in topic_digest:
+            topic_digest[topic] = TopicComment.objects.filter(topic=topic).order_by('created_at').reverse()[0]
+
+        return render(request, 'home.html', {'projects'  : projects, 'topic_digest' : topic_digest})
     return redirect('/login')
 
-def update_profile(request, user_id):
-    user = User.objects.get(pk=user_id)
-    user.profile.about = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit...'
-    user.save()
+def edit_profile(request, user):
+    if request.user != User.objects.filter(username=user).first():
+        return redirect('/home')
+    if request.method == 'POST':
+        form = EditProfileForm(request.POST)
+        if form.is_valid():
+            profile = get_object_or_404(Profile, user=request.user)
+            #major skills about
+            profile.major = form.cleaned_data['major']
+            profile.skills = form.cleaned_data['skills']
+            profile.about = form.cleaned_data['about']
+            profile.save(update_fields=['major','skills','about'])
+            return redirect('/home')
+    else:
+        form = EditProfileForm()
+        return render(request, 'edit_profile.html', {'form': form})
+
+def upload_file(request, project):
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            instance = Upload(up_file=request.FILES['file'])
+            up_description
+            assoc_project = form.cleaned_data['assoc_project']
+            instance.save()
+            return HttpResponseRedirect('/success/url/')
+    else:
+        form = UploadFileForm()
+    return render(request, 'upload.html', {'form': form})
 
 def view_profile(request, username):
     userobj =  User.objects.filter(username=username).first()
@@ -34,9 +110,67 @@ def view_profile(request, username):
         return render(request, 'profile_404.html')
 
     profile = Profile.objects.filter(user=userobj).first()
-    skills = profile.skills.all()
-    return render(request, 'profile.html', {'user': username, 'profile': profile, 'skills': skills})
+    projects = Project.objects.filter(owner=userobj).all()
+    if userobj == request.user:
+        myprofile = True
+    else:
+        myprofile = False
+    return render(request, 'profile.html', {'user': username, 'profile': profile, 'projects': projects, 'myprofile' : myprofile})
 
+def view_topic(request, topicname):
+    if not request.user.is_authenticated():
+        return redirect('/login')
+
+    topic = Topic.objects.filter(topic_name=topicname).first()
+    comments = TopicComment.objects.filter(topic=topic).all()
+    form = TopicCommentForm()
+    source = request.path
+
+    if request.method == 'POST':
+        form = TopicCommentForm(request.POST)
+        if form.is_valid():
+            print(form.cleaned_data)
+            new_comment = TopicComment()
+            new_comment.creator = request.user
+            new_comment.content = form.cleaned_data['content']
+            new_comment.topic = topic
+            new_comment.save()
+            return redirect(request.path)
+    else:
+        return render(request, 'topic.html', {'topic': topic, 'comments': comments, 'form': form })
+
+def view_project(request, projectname):
+    if not request.user.is_authenticated():
+        return redirect('/login')
+
+    project = Project.objects.filter(project_name=projectname).first()
+    comments = ProjectComment.objects.filter(project=projectname).all()
+    form = ProjectCommentForm()
+    source = request.path
+    if request.method == 'POST':
+        form = ProjectCommentForm(request.POST)
+        if form.is_valid():
+            print(form.cleaned_data)
+            new_comment = ProjectComment()
+            new_comment.creator = request.user
+            new_comment.content = form.cleaned_data['content']
+            new_comment.project = project
+            new_comment.save()
+            return redirect(request.path)
+    else:
+        return render(request, 'project.html', {'project': project, 'comments': comments, 'form': form, 'url': source})
+
+def project_index(request):
+    if not request.user.is_authenticated():
+        return redirect('/login')
+    project_list = Project.objects.all()
+    return render(request, 'project_index.html', {'projects': project_list})
+
+def topic_index(request):
+    if not request.user.is_authenticated():
+        return redirect('/login')
+    topic_list = Topic.objects.all()
+    return render(request, 'topic_index.html', {'topics': topic_list})
 
 def my_login(request):
     if request.user.is_authenticated():
