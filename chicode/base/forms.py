@@ -1,11 +1,13 @@
 from django import forms
 from base.models import *
 import re
+import requests
+import json
 
 class UploadFileForm(forms.ModelForm):
     class Meta:
         model = Upload
-        fields = ['up_name', 'up_description', 'up_file']
+        fields = ['filename', 'description', 'upload']
 
 class NewTopicForm(forms.Form):
     topic_name = forms.CharField(max_length = 64, required=True)

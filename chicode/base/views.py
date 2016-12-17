@@ -9,6 +9,10 @@ from .forms import *
 from django.contrib.auth.decorators import login_required
 from django import forms
 
+def file(request, filename):
+    #TODO allow user to download file
+    return redirect('/home')
+
 def add_topic(request):
     if not request.user.is_authenticated():
         return redirect('/login')
@@ -95,14 +99,21 @@ def upload_file(request, project):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
-            instance = Upload(up_file=request.FILES['up_file'])
-            up_description = form.cleaned_data['up_description']
-            instance.assoc_project = Project.objects.filter(project_name=project).first()
-            instance.save()
+            new_file = Upload()
+            new_file.filename = form.cleaned_data['filename']
+            new_file.description = form.cleaned_data['description']
+            new_file.assoc_project = Project.objects.filter(project_name=project).first()
+            new_file.uploaded_by = request.user
+            new_file.save()
+            message = 'form is fine'
             return redirect('/home')
+        else:
+            message = 'invalid form'
     else:
         form = UploadFileForm()
-    return render(request, 'upload.html', {'form': form})
+        message = 'loaded'
+
+    return render(request, 'upload.html', {'form': form, 'project' : project, 'message' : message})
 
 def view_profile(request, username):
     userobj =  User.objects.filter(username=username).first()
@@ -129,7 +140,6 @@ def view_topic(request, topicname):
     if request.method == 'POST':
         form = TopicCommentForm(request.POST)
         if form.is_valid():
-            print(form.cleaned_data)
             new_comment = TopicComment()
             new_comment.creator = request.user
             new_comment.content = form.cleaned_data['content']
@@ -139,18 +149,21 @@ def view_topic(request, topicname):
     else:
         return render(request, 'topic.html', {'topic': topic, 'comments': comments, 'form': form })
 
+
+    return serve_file(request, upload.file)
+
 def view_project(request, projectname):
     if not request.user.is_authenticated():
         return redirect('/login')
 
     project = Project.objects.filter(project_name=projectname).first()
     comments = ProjectComment.objects.filter(project=projectname).all()
+    comments.reverse()
     form = ProjectCommentForm()
-    source = request.path
+    files = Upload.objects.filter(assoc_project=project)
     if request.method == 'POST':
         form = ProjectCommentForm(request.POST)
         if form.is_valid():
-            print(form.cleaned_data)
             new_comment = ProjectComment()
             new_comment.creator = request.user
             new_comment.content = form.cleaned_data['content']
@@ -158,7 +171,7 @@ def view_project(request, projectname):
             new_comment.save()
             return redirect(request.path)
     else:
-        return render(request, 'project.html', {'project': project, 'comments': comments, 'form': form, 'url': source})
+        return render(request, 'project.html', {'project': project, 'comments': comments, 'form': form, 'files': files})
 
 def project_index(request):
     if not request.user.is_authenticated():

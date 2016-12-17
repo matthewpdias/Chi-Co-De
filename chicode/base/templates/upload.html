@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container headroom text-center">
+  <form enctype="multipart/form-data" action="{%url 'upload_file' project%}" method="POST">
+    <h2> Upload File: </h2>
+    <h2>{{ message }}</h2>
+    {% csrf_token %}
+    {% for field in form %}
+      <p class="inline"> {{field.label}}:</p><p class="inline"> {{field}} <p>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">upload</button>
+  </form>
+</div>
+{% endblock %}

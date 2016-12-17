@@ -22,7 +22,7 @@
     <div class="col-sm-6 col-md-6 well">
       <h2>Discussions you watch</h2>
       {% for topic, comment in topic_digest.items %}
-      <p>in <span class="text-success">{{ topic.topic_name }}</span>, <span class="text-muted">{{ comment.creator }}</span> said "{{comment.content}}"</p>
+      <p>in <a href="{%url 'view_topic' topic.topic_name%}">{{topic.topic_name}}</a>, <span class="text-muted">{{ comment.creator }}</span> said "{{comment.content}}"</p>
       {% endfor %}
       <br/>
     </div>

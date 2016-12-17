@@ -21,10 +21,14 @@ class Project(models.Model):
 
 
 class Upload(models.Model):
-    up_name = models.CharField(primary_key=True, max_length=64)
-    up_description = models.CharField(null=True, max_length=256)
-    up_file = models.FileField(upload_to='uploads/')
+    filename = models.CharField(primary_key=True, max_length=64)
+    description = models.CharField(null=True, max_length=256)
+    upload = models.FileField(upload_to='uploads/')
     assoc_project = models.ForeignKey(Project, default='', related_name='associated_project')
+    uploaded_by = models.ForeignKey(User, default='system', related_name='file_owner')
+
+    def __str__(self):
+        return self.filename
 
 class Topic(models.Model):
     topic_name = models.CharField(primary_key=True, max_length=64)

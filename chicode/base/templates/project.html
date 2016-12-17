@@ -1,24 +1,34 @@
 {% extends "base.html" %}
 
 {% block content %}
+{% load markdown_deux_tags %}
 <div class="container">
   <h2> {{ project.project_name }} </h2>
   <h4> &quot{{ project.project_description }}&quot </h4>
   <h4> This project uses:&nbsp &nbsp{{ project.tech_used }} </h4>
   <p> a project by <a href="{%url 'view_profile' project.owner%}">{{project.owner}}</a><p>
-</div>
+
 {% for comment in comments %}
-  <p class="lead"> &quot{{ comment.content }}&quot</p>
-  <ul>
-    <li><a href="{%url 'view_profile' comment.creator.username%}">{{comment.creator.username}}</a>@{{comment.created_at|date:"D d M Y"}}</li>
-  </ul>
+<div class="panel panel-deafault panel-shadow">
+    <div class="panel-heading">
+      <a href="{%url 'view_profile' comment.creator.username%}" class="inline">{{comment.creator.username}}</a>
+      <p class="text-muted inline">@{{comment.created_at}}</p>
+    </div>
+    <div class="panel-body">
+      <p>{{comment.content | markdown}}</p>
+    </div>
+  </div>
+{% endfor %}
+
+{% for file in files %}
+<p><a href="{%url 'file' file.filename%}">{{file.upload.name}}</a></p>
 {% endfor %}
 
   <form method="post" action="{{request.path}}" class="inline">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit" class="btn btn-sm btn-success">Post</button>
+    <button type="submit" class="btn btn-success">Post</button>
   </form>
-  <a href={url 'upload_file'}
-
+  <a href="{%url 'upload_file' project.project_name%}" class="btn btn-primary inline">add file</a>
+</div>
 {% endblock %}

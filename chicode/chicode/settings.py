@@ -39,12 +39,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.shortcuts',
+    'markdown_deux',
     'base',
     'chicode',
 
 ]
 
-MEDIA_ROOT = os.path.join(BASE_DIR, "base`", "media")
+MEDIA_ROOT = os.path.join(BASE_DIR, "base", "media")
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

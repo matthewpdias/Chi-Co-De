@@ -1,20 +1,24 @@
 {% extends "base.html" %}
 
 {% block content %}
+{% load markdown_deux_tags %}
 <div class="container headroom">
   <h2>{{ topic.topic_name }}</h2>
   <p class="lead">&quot{{ topic.first }}&quot</p>
 {% for comment in comments %}
-  <p class="lead"> &quot{{ comment.content }}&quot</p>
-  <ul>
-    <li><a href="{%url 'view_profile' comment.creator.username%}">{{comment.creator.username}}</a>@{{comment.created_at|date:"D d M Y"}}</li>
-  </ul>
+<div class="panel panel-deafault panel-shadow">
+  <div class="panel-heading">
+    <a href="{%url 'view_profile' comment.creator.username%}" class="inline">{{comment.creator.username}}</a>
+    <p class="text-muted inline">@{{comment.created_at}}</p>
+  </div>
+  <div class="panel-body">
+    <p>{{comment.content | markdown}}</p>
+  </div>
+</div>
 {% endfor %}
-
   <form method="post" action="{{request.path}}">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit" class="btn btn-sm btn-success">Post</button>
   </form>
-</div>
 {% endblock %}

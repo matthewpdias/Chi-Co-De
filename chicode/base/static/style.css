@@ -7,6 +7,11 @@
   text-align: center;
 }
 
+.panel-heading{
+  padding-bottom: 0px;
+}
+
+
 .inline{
   display: inline-block;
 }
