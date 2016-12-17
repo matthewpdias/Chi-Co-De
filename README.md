@@ -2,7 +2,7 @@
 
 ## How-to-use
 login credentials :  
-username: `test`
+username: `test`  
 password: `test`
 
 simply use the links provided to navigate pages as you see fit. You may upload documents but they do not currently display for users.
